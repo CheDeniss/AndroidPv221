@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="calc_textview_data"> <!-- TextView style for data -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:layout_marginHorizontal">10dp</item>
+        <item name="android:textAlignment">viewEnd</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="calc_btn"> <!-- Button style -->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textSize">27sp</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="calc_btn_oper" parent="calc_btn"> <!-- Operator button style -->
+        <item name="android:background">@drawable/calc_btn_oper</item>
+    </style>
+
+    <style name="calc_btn_oper_simple" parent="calc_btn"> <!-- Simple operator button style -->
+        <item name="android:background">@drawable/calc_btn_oper</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="calc_btn_digit" parent="calc_btn"> <!-- Digit button style -->
+        <item name="android:background">@drawable/calc_btn_digit</item>
+    </style>
+
+    <style name="calc_btn_equal" parent="calc_btn"> <!-- Equal button style -->
+        <item name="android:background">@drawable/calc_btn_equal</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+
+</resources>

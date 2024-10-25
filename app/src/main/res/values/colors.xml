@@ -7,4 +7,14 @@
     <color name="button_bkg">#00B0FF</color>
     <color name="button_text_color">#E7E7E7</color>
 
+    <!-- calc -->
+    <color name="calc_bkg">#ABABAB</color> <!-- Calculator Background-->
+    <color name="calc_text_clr">#AD1838</color> <!-- Calculator Text Color-->
+    <color name="calc_history_clr">#434343</color> <!-- Calculator History Color-->
+    <color name="calc_equal_clr">#1B1B1B</color> <!-- Calculator Equal Color-->
+
+    <color name="calc_btn_digit">#787878</color> <!-- Digit Button Color-->
+    <color name="calc_btn_equal">#660B0B</color> <!-- Equal Button Color-->
+    <color name="calc_btn_oper">#373535</color> <!-- Operator Button Color-->
+    <!-- endregion-->
 </resources>
