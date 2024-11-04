@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:background="@color/button_bkg"
             android:textColor="@color/button_text_color"
-            android:text="Second button"
+            android:text="@string/game_tv_title"
             android:textSize="24dp"
             android:layout_marginTop="20dp"
             app:backgroundTint="@null"

@@ -3,7 +3,6 @@ package itstep.learning.andrpv221;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,10 +24,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         findViewById( R.id.button ).setOnClickListener( this::onCalcButtonClick );
+        findViewById( R.id.button2 ).setOnClickListener( this::onGameButtonClick );
     }
 
     private void onCalcButtonClick ( View view ) {
         Intent intent = new Intent(this, CalcActivity.class);
+        startActivity( intent );
+    }
+
+    private void onGameButtonClick ( View view ) {
+        Intent intent = new Intent(this, GameActivity.class);
         startActivity( intent );
     }
 }

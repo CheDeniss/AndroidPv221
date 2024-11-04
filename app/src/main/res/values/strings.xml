@@ -3,7 +3,7 @@
 
     <!-- calc -->
     <string name="calc_tv_title">Калькулятор</string> <!-- Calculator Title-->
-
+    <string name="game_tv_title">2048</string>
     <string name="calc_btn_percent">%</string> <!-- Percent -->
     <string name="calc_btn_ce">CE</string> <!-- Clear Entry -->
     <string name="calc_btn_c">C</string> <!-- Clear -->
@@ -12,15 +12,17 @@
     <string name="calc_btn_inverce">x\u207B\u00B9</string> <!-- Inverse -->
     <string name="calc_btn_square">x\u00B2</string> <!-- Square -->
     <string name="calc_btn_sqrt">\u221A</string> <!-- Square Root -->
+
     <string name="calc_btn_divide">\u00F7</string> <!-- Divide -->
     <string name="calc_btn_mult">\u00D7</string> <!-- Multiply -->
     <string name="calc_btn_minus">\u2212</string> <!-- Minus -->
     <string name="calc_btn_plus">\u002B</string> <!-- Plus -->
+
     <string name="calc_btn_pm">\u00B1</string> <!-- Plus Minus -->
     <string name="calc_btn_comma">\u002E</string> <!-- Comma -->
     <string name="calc_btn_equal">\u003D</string> <!-- Equal -->
 
-    <string name="calc_btn_digit_0">0</string>
+    <string name="calc_btn_digit_0">\ua668</string>
     <string name="calc_btn_digit_1">1</string>
     <string name="calc_btn_digit_2">2</string>
     <string name="calc_btn_digit_3">3</string>

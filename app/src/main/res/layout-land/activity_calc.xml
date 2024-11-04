@@ -13,6 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/calkBack"
@@ -29,31 +37,36 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
             android:text="@string/calc_tv_title"
             android:textAlignment="center"
-            android:gravity="center"
             android:textColor="@color/calc_text_clr"
-            android:textSize="22sp"/>        <!-- Title -->
+            android:textSize="22sp" />        <!-- Title -->
 
-
+        <!-- History -->
 
     </LinearLayout>
-
 
     <TextView
         android:id="@+id/calc_history"
         style="@style/calc_textview_data"
-        android:textColor="@color/calc_history_clr"
+        android:layout_width="match_parent"
         android:text="5-3="
-        android:textSize="23sp" /> <!-- History -->
+        android:textAlignment="viewStart"
+        android:textColor="@color/calc_history_clr"
+        android:textSize="23sp" />
+</LinearLayout>
 
-    <TextView
-        android:id="@+id/calc_equal"
-        style="@style/calc_textview_data"
-        android:fontFamily="@font/montserrat_medium"
-        android:text="2"
-        android:textColor="@color/calc_equal_clr"
-        android:textSize="65sp" /> <!-- Equal -->
+        <TextView
+            android:id="@+id/calc_equal"
+            style="@style/calc_textview_data"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="2"
+            android:textColor="@color/calc_equal_clr"
+            android:textSize="65sp" /> <!-- Equal -->
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,11 +79,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/calc_btn_percent"
-                style="@style/calc_btn_oper"
-                android:text="@string/calc_btn_percent"/>
 
             <Button
                 android:id="@+id/calc_btn_ce"
@@ -93,33 +101,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/calc_btn_inverce"
-                style="@style/calc_btn_oper"
-                android:text="@string/calc_btn_inverce"/>
-
-            <Button
-                android:id="@+id/calc_btn_square"
-                style="@style/calc_btn_oper"
-                android:text="@string/calc_btn_square"/>
-
-            <Button
-                android:id="@+id/calc_btn_sqrt"
-                style="@style/calc_btn_oper"
-                android:text="@string/calc_btn_sqrt"/>
-
             <Button
                 android:id="@+id/calc_btn_divide"
                 style="@style/calc_btn_oper_simple"
                 android:text="@string/calc_btn_divide"/>
-        </LinearLayout> <!-- Inverse, Square, Square Root, Divide -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            <Button
+                android:id="@+id/calc_btn_inverce"
+                style="@style/calc_btn_oper"
+                android:text="@string/calc_btn_inverce"/>
 
             <Button
                 android:id="@+id/calc_btn_digit_7"
@@ -136,10 +125,7 @@
                 style="@style/calc_btn_digit"
                 android:text="@string/calc_btn_digit_9"/>
 
-            <Button
-                android:id="@+id/calc_btn_mult"
-                style="@style/calc_btn_oper_simple"
-                android:text="@string/calc_btn_mult"/>
+
         </LinearLayout> <!-- 7, 8, 9, Multiply -->
 
         <LinearLayout
@@ -147,7 +133,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-
+            <Button
+                android:id="@+id/calc_btn_mult"
+                style="@style/calc_btn_oper_simple"
+                android:text="@string/calc_btn_mult"/>
+            <Button
+                android:id="@+id/calc_btn_square"
+                style="@style/calc_btn_oper"
+                android:text="@string/calc_btn_square"/>
             <Button
                 android:id="@+id/calc_btn_digit_4"
                 style="@style/calc_btn_digit"
@@ -163,10 +156,7 @@
                 style="@style/calc_btn_digit"
                 android:text="@string/calc_btn_digit_6"/>
 
-            <Button
-                android:id="@+id/calc_btn_minus"
-                style="@style/calc_btn_oper_simple"
-                android:text="@string/calc_btn_minus"/>
+
         </LinearLayout> <!-- 4, 5, 6, Minus -->
 
         <LinearLayout
@@ -174,7 +164,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-
+            <Button
+                android:id="@+id/calc_btn_minus"
+                style="@style/calc_btn_oper_simple"
+                android:text="@string/calc_btn_minus"/>
+            <Button
+                android:id="@+id/calc_btn_sqrt"
+                style="@style/calc_btn_oper"
+                android:text="@string/calc_btn_sqrt"/>
             <Button
                 android:id="@+id/calc_btn_digit_1"
                 style="@style/calc_btn_digit"
@@ -190,10 +187,7 @@
                 style="@style/calc_btn_digit"
                 android:text="@string/calc_btn_digit_3"/>
 
-            <Button
-                android:id="@+id/calc_btn_plus"
-                style="@style/calc_btn_oper_simple"
-                android:text="@string/calc_btn_plus"/>
+
         </LinearLayout> <!-- 1, 2, 3, Plus -->
 
         <LinearLayout
@@ -201,7 +195,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-
+            <Button
+                android:id="@+id/calc_btn_plus"
+                style="@style/calc_btn_oper_simple"
+                android:text="@string/calc_btn_plus"/>
+            <Button
+                android:id="@+id/calc_btn_percent"
+                style="@style/calc_btn_oper"
+                android:text="@string/calc_btn_percent"/>
             <Button
                 android:id="@+id/calc_btn_pm"
                 style="@style/calc_btn_oper_simple"
