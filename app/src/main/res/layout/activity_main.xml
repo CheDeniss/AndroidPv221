@@ -39,7 +39,7 @@
             android:layout_marginTop="20dp"
             android:background="@color/button_bkg"
             android:textColor="@color/button_text_color"
-            android:text="Калькулятор"
+            android:text="@string/main_btn_calc"
             android:textSize="24dp"
             app:backgroundTint="@null" />
 
@@ -49,11 +49,24 @@
             android:layout_height="wrap_content"
             android:background="@color/button_bkg"
             android:textColor="@color/button_text_color"
-            android:text="@string/game_tv_title"
+            android:text="@string/main_btn_game"
             android:textSize="24dp"
             android:layout_marginTop="20dp"
             app:backgroundTint="@null"
             />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/button_bkg"
+            android:textColor="@color/button_text_color"
+            android:text="@string/main_btn_anim"
+            android:textSize="24dp"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@null"
+            />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

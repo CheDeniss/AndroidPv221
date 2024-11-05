@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById( R.id.button ).setOnClickListener( this::onCalcButtonClick );
         findViewById( R.id.button2 ).setOnClickListener( this::onGameButtonClick );
+        findViewById( R.id.button3 ).setOnClickListener( this::onAnimButtonClick );
     }
 
     private void onCalcButtonClick ( View view ) {
@@ -34,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void onGameButtonClick ( View view ) {
         Intent intent = new Intent(this, GameActivity.class);
+        startActivity( intent );
+    }
+
+    private void onAnimButtonClick( View view ) {
+        Intent intent = new Intent( MainActivity.this, AnimActivity.class );
         startActivity( intent );
     }
 }

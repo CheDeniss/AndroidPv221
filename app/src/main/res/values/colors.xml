@@ -36,11 +36,7 @@
     <color name="game_tile_512">#E5C764</color>
     <color name="game_tile_1024">#EBC43F</color>
     <color name="game_tile_2048">#ECC02E</color>
-    <color name="game_first_text_color">#766D65</color>
-    <color name="game_second_text_color">#F5F4F4</color>
-
-
-
+    <color name="game_tile_other">#3B3B31</color>
     <color name="game_text_0">#BCB09B</color>
     <color name="game_text_2">#766F62</color>
     <color name="game_text_4">#6D665B</color>
@@ -54,5 +50,7 @@
     <color name="game_text_1024">#F8F7F1</color>
     <color name="game_text_2048">#F8F7F1</color>
     <color name="game_text_other">#F8F6EF</color>
+    <color name="game_first_text_color">#766D65</color>
+    <color name="game_second_text_color">#F5F4F4</color>
     <!-- endregion-->
 </resources>

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Android- Pv-221</string>
 
+    <string name="main_btn_calc">Калькулятор</string>
+    <string name="main_btn_game">2048</string>
+    <string name="main_btn_anim">Анімації</string>
     <!-- calc -->
     <string name="calc_tv_title">Калькулятор</string> <!-- Calculator Title-->
     <string name="game_tv_title">2048</string>
