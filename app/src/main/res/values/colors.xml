@@ -24,7 +24,7 @@
     <color name="game_btn_background">#8E7966</color>
     <color name="game_table_color">#BAAC9F</color>
     <color name="game_main_tile_color">#CCC0B3</color>
-    <color name="game_tile_0">#BCB09B</color>
+    <color name="game_tile_0">#978C81</color>
     <color name="game_tile_2">#ECE3D9</color>
     <color name="game_tile_4">#EBDFC7</color>
     <color name="game_tile_8">#F0B078</color>
@@ -37,7 +37,7 @@
     <color name="game_tile_1024">#EBC43F</color>
     <color name="game_tile_2048">#ECC02E</color>
     <color name="game_tile_other">#3B3B31</color>
-    <color name="game_text_0">#BCB09B</color>
+    <color name="game_text_0">#978C81</color>
     <color name="game_text_2">#766F62</color>
     <color name="game_text_4">#6D665B</color>
     <color name="game_text_8">#F8F7F1</color>

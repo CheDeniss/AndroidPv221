@@ -4,6 +4,14 @@
     <string name="main_btn_calc">Калькулятор</string>
     <string name="main_btn_game">2048</string>
     <string name="main_btn_anim">Анімації</string>
+
+    <string name="anim_alpha">Альфа</string>
+    <string name="anim_scale">Розмір</string>
+    <string name="anim_rotate">Поворот</string>
+    <string name="anim_translate">Переміщення</string>
+    <string name="anim_set">Комбінована</string>
+    <string name="anim_bell">Дзвоник</string>
+
     <!-- calc -->
     <string name="calc_tv_title">Калькулятор</string> <!-- Calculator Title-->
     <string name="game_tv_title">2048</string>
@@ -35,6 +43,16 @@
     <string name="calc_btn_digit_7">7</string>
     <string name="calc_btn_digit_8">8</string>
     <string name="calc_btn_digit_9">9</string>
+
+    <!-- endregion-->
+
+    <!-- region 2048 -->
+    <string name="game_tv_score">SCORE\n%s</string>
+    <string name="game_tv_best">BEST\n%s</string>
+    <string name="game_tv_new">NEW</string>
+    <string name="game_tv_undo">UNDO</string>
+    <string name="game_2048">2048</string>
+    <string name="game_tv_hint">Збирай 2048</string>
 
     <!-- endregion-->
 </resources>

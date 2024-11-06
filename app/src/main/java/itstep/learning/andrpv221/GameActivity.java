@@ -3,6 +3,7 @@ package itstep.learning.andrpv221;
 import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
@@ -24,9 +25,12 @@ public class GameActivity extends AppCompatActivity {
     private final int[][] cells = new int[N][N];
     private final TextView[][] tvCells = new TextView[N][N];
     private final Random random = new Random();
-    private Animation spawnAnimation, collapseAnimation;
+    private Animation spawnAnimation, collapseAnimation, rotateDemo;
+    private int score, bestScore;
+    private TextView tvScore, tvBestScore;
+    private boolean bestScoreOverReached = false;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +44,12 @@ public class GameActivity extends AppCompatActivity {
 
         spawnAnimation = AnimationUtils.loadAnimation( this, R.anim.game_spawn ) ;
         collapseAnimation = AnimationUtils.loadAnimation( this, R.anim.game_collapse ) ;
+        rotateDemo = AnimationUtils.loadAnimation(this, R.anim.rotate_demo );
+
+        tvScore = findViewById(R.id.game_tv_score);
+        tvBestScore = findViewById(R.id.game_tv_best_score);
+
+        findViewById(R.id.game_btn_new).setOnClickListener( this::newGame );
 
         LinearLayout gameField = findViewById(R.id.game_ll_field);
 
@@ -99,6 +109,13 @@ public class GameActivity extends AppCompatActivity {
         showField();
         }
 
+    private void newGame(View view) {
+        initField();
+        spawnCell();
+        showField();
+        bestScoreOverReached = false;
+    }
+
     private boolean moveLeft() {
         boolean result = false;
         for (int i = 0; i < N; i++) {      // [4 2 2 4]
@@ -113,6 +130,7 @@ public class GameActivity extends AppCompatActivity {
                             cells[i][j] *= 2;
                             tvCells[i][j].setTag( collapseAnimation );
                             cells[i][j0] = 0;
+                            score += cells[i][j];
                             result = true;
                             j0 = -1;
                         }
@@ -161,6 +179,7 @@ public class GameActivity extends AppCompatActivity {
                 if( cells[i][j - 1] == cells[i][j] && cells[i][j] != 0 ) {
                     cells[i][j] *= 2;                   //  [2 2 4 8]
                     tvCells[i][j].setTag( collapseAnimation );
+                    score += cells[i][j];
                     // cells[i][j - 1] = 0;             //  [2 2 0 8]
                     for( int k = j - 1; k > 0; k-- ) {  //  [2 2 2 8]
                         cells[i][k] = cells[i][k - 1];
@@ -186,6 +205,7 @@ public class GameActivity extends AppCompatActivity {
                             cells[i][j] *= 2;
                             tvCells[i][j].setTag(collapseAnimation);
                             cells[i0][j] = 0;
+                            score += cells[i][j];
                             result = true;
                             i0 = -1;
                         } else {
@@ -232,6 +252,7 @@ public class GameActivity extends AppCompatActivity {
                 if (cells[i - 1][j] == cells[i][j] && cells[i][j] != 0) {
                     cells[i][j] *= 2;
                     tvCells[i][j].setTag(collapseAnimation);
+                    score += cells[i][j];
                     for (int k = i - 1; k > 0; k--) {
                         cells[k][j] = cells[k - 1][j];
                     }
@@ -242,7 +263,6 @@ public class GameActivity extends AppCompatActivity {
         }
         return result;
     }
-
 
     private boolean spawnCell() {
         // 1 зібрати дані про порожні комірки
@@ -270,7 +290,7 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 // cells[i][j] = (int) Math.pow( 2, i * N + j +1 ) ;
-                cells[0][0] = 0;
+                cells[i][j] = 0;
                 tvCells[i][j] = findViewById(
                         getResources().getIdentifier(
                                 "game_cell_" + i + j,
@@ -280,8 +300,11 @@ public class GameActivity extends AppCompatActivity {
                 );
             }
         }
+        score = 0;
+        bestScore = 20;
     }
 
+    @SuppressLint("StringFormatMatches")
     private void showField() {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -314,6 +337,16 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
+        tvScore.setText( getString(R.string.game_tv_score, String.valueOf(score)) );
+        if(score > bestScore) {
+            bestScore = score;
+            if(!bestScoreOverReached){
+                tvBestScore.startAnimation( rotateDemo );
+                bestScoreOverReached = true;
+            }
+        }
+        tvBestScore.setText( getString(R.string.game_tv_best, String.valueOf(bestScore)) );
+
     }
 
     static class Coordinates {
