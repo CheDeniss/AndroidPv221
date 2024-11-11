@@ -67,6 +67,18 @@
             app:backgroundTint="@null"
             />
 
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/button_bkg"
+            android:textColor="@color/button_text_color"
+            android:text="@string/main_btn_chat"
+            android:textSize="24dp"
+            android:layout_marginTop="20dp"
+            app:backgroundTint="@null"
+            />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

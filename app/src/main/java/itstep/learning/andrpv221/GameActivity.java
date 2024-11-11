@@ -3,6 +3,7 @@ package itstep.learning.andrpv221;
 import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -11,18 +12,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.ToLongFunction;
 
 public class GameActivity extends AppCompatActivity {
+    private static final String bestScoreFilename = "best_score.2048";
     private static final int N = 4;
     private final int[][] cells = new int[N][N];
+    private int[][] undo;
+    private int prevScore; // for undo
     private final TextView[][] tvCells = new TextView[N][N];
     private final Random random = new Random();
     private Animation spawnAnimation, collapseAnimation, rotateDemo;
@@ -50,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
         tvBestScore = findViewById(R.id.game_tv_best_score);
 
         findViewById(R.id.game_btn_new).setOnClickListener( this::newGame );
+        findViewById(R.id.game_btn_undo).setOnClickListener( v -> undoMove() );
 
         LinearLayout gameField = findViewById(R.id.game_ll_field);
 
@@ -73,7 +86,9 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeLeft() {
-                if( moveLeft() ) {
+                if( canMoveLeft() ) {
+                    saveField();
+                    moveLeft();
                     spawnCell();
                     showField();
                 }
@@ -107,7 +122,33 @@ public class GameActivity extends AppCompatActivity {
         initField();
         spawnCell();
         showField();
+    }
+
+
+
+    private void saveBestScore() {
+        try (FileOutputStream fos = openFileOutput( bestScoreFilename, MODE_PRIVATE ) ) {
+            DataOutputStream writer = new DataOutputStream( fos );
+            writer.writeInt( bestScore );
+            writer.flush();
+            writer.close();
+        } catch ( IOException ex ) {
+            Log.e("GameActivity::Error saving best score",
+                    ex.getMessage() != null ? ex.getMessage() : "Error writing File");
         }
+    }
+
+    private void loadBestScore() {
+        try (
+                FileInputStream fis = openFileInput(bestScoreFilename);
+                DataInputStream reader = new DataInputStream(fis)
+        ) {
+            bestScore = reader.readInt();
+        } catch (IOException ex) {
+            Log.e("GameActivity::Error loading best score",
+                    ex.getMessage() != null ? ex.getMessage() : "Error reading File");
+        }
+    }
 
     private void newGame(View view) {
         initField();
@@ -116,8 +157,53 @@ public class GameActivity extends AppCompatActivity {
         bestScoreOverReached = false;
     }
 
-    private boolean moveLeft() {
-        boolean result = false;
+    private void saveField() {
+        undo = new int[N][N];
+        prevScore = score;
+        for( int i = 0; i < N; i++ ) {
+            System.arraycopy( cells[i], 0, undo[i], 0, N );
+        }
+    }
+
+    private void undoMove() {
+        if( undo == null ) {
+            showUndoMessage();
+            return;
+        }
+        for( int i = 0; i < N; i++ ) {
+            System.arraycopy( undo[i], 0, cells[i], 0, N );
+        }
+        undo = null;
+        score = prevScore;
+        showField();
+    }
+
+    private void showUndoMessage() {
+        new AlertDialog
+                .Builder(this, androidx.appcompat.R.style.Base_V21_ThemeOverlay_AppCompat_Dialog)
+                .setTitle( "Undo" )
+                .setIcon( android.R.drawable.ic_dialog_alert )
+                .setMessage( "You can undo only one move" )
+                .setNeutralButton("Закрити", (dialog, which) -> {})
+                .setNegativeButton("Вийти", (dialog, which) -> finish())
+                .setPositiveButton("Підписка", (dialog, which) -> Toast.makeText(this, "Скоро буде...", Toast.LENGTH_SHORT).show())
+                .setCancelable( false )
+                .show();
+
+    }
+
+    private boolean canMoveLeft() {
+        for( int i = 0; i < N; i++ ) {
+            for( int j = 1; j < N; j++ ) {
+                if( cells[i][j] != 0 && ( cells[i][j - 1] == 0 || cells[i][j - 1] == cells[i][j] ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void moveLeft() {
         for (int i = 0; i < N; i++) {      // [4 2 2 4]
             int j0 = -1;
             for (int j = 0; j < N; j++) {
@@ -131,7 +217,6 @@ public class GameActivity extends AppCompatActivity {
                             tvCells[i][j].setTag( collapseAnimation );
                             cells[i][j0] = 0;
                             score += cells[i][j];
-                            result = true;
                             j0 = -1;
                         }
                         else {
@@ -153,11 +238,9 @@ public class GameActivity extends AppCompatActivity {
                     cells[i][j] = 0;
                     tvCells[i][j].setTag( null );
                     j0 += 1;
-                    result = true;
                 }
             }
         }
-        return result;
     }
 
     private boolean moveRight() {
@@ -301,7 +384,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         score = 0;
-        bestScore = 20;
+        loadBestScore();
     }
 
     @SuppressLint("StringFormatMatches")
@@ -340,10 +423,7 @@ public class GameActivity extends AppCompatActivity {
         tvScore.setText( getString(R.string.game_tv_score, String.valueOf(score)) );
         if(score > bestScore) {
             bestScore = score;
-            if(!bestScoreOverReached){
-                tvBestScore.startAnimation( rotateDemo );
-                bestScoreOverReached = true;
-            }
+            saveBestScore();
         }
         tvBestScore.setText( getString(R.string.game_tv_best, String.valueOf(bestScore)) );
 

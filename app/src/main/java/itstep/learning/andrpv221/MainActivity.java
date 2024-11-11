@@ -1,5 +1,6 @@
 package itstep.learning.andrpv221;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById( R.id.button ).setOnClickListener( this::onCalcButtonClick );
         findViewById( R.id.button2 ).setOnClickListener( this::onGameButtonClick );
         findViewById( R.id.button3 ).setOnClickListener( this::onAnimButtonClick );
+        findViewById( R.id.button4 ).setOnClickListener( this::onChatButtonClick );
+    }
+
+    private void onChatButtonClick(View view) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        startActivity(intent);
     }
 
     private void onCalcButtonClick ( View view ) {
