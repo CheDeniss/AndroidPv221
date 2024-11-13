@@ -21,13 +21,11 @@ import androidx.core.view.WindowInsetsCompat;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.ToLongFunction;
 
 public class GameActivity extends AppCompatActivity {
     private static final String bestScoreFilename = "best_score.2048";
@@ -40,7 +38,7 @@ public class GameActivity extends AppCompatActivity {
     private Animation spawnAnimation, collapseAnimation, rotateDemo;
     private int score, bestScore;
     private TextView tvScore, tvBestScore;
-    private boolean bestScoreOverReached = false;
+    private boolean letsPlayFurther = false;
 
     @SuppressLint({"ClickableViewAccessibility", "MissingInflatedId"})
     @Override
@@ -75,9 +73,12 @@ public class GameActivity extends AppCompatActivity {
         gameField.setOnTouchListener( new OnSwipeListener(GameActivity.this) {
             @Override
             public void onSwipeBottom() {
-                if( moveDown() ) {
+                if( canMoveBottom() ) {
+                    saveField();
+                    moveDown();
                     spawnCell();
                     showField();
+                    isGameOver();
                 }
                 else{
                     Toast.makeText(GameActivity.this, "No Down Move", Toast.LENGTH_SHORT).show();
@@ -91,6 +92,7 @@ public class GameActivity extends AppCompatActivity {
                     moveLeft();
                     spawnCell();
                     showField();
+                    isGameOver();
                 }
                 else {
                     Toast.makeText(GameActivity.this, "No Left Move", Toast.LENGTH_SHORT).show();
@@ -99,9 +101,12 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeRight() {
-                if( moveRight() ) {
+                if( canMoveRight() ) {
+                    saveField();
+                    moveRight();
                     spawnCell();
                     showField();
+                    isGameOver();
                 }
                 else {
                     Toast.makeText(GameActivity.this, "No Right Move", Toast.LENGTH_SHORT).show();
@@ -110,9 +115,12 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeTop() {
-                if( moveUp() ) {
+                if( canMoveTop() ) {
+                    saveField();
+                    moveUp();
                     spawnCell();
                     showField();
+                    isGameOver();
                 }
                 else {
                     Toast.makeText(GameActivity.this, "No Up Move", Toast.LENGTH_SHORT).show();
@@ -124,7 +132,33 @@ public class GameActivity extends AppCompatActivity {
         showField();
     }
 
-
+    private void isGameOver() {
+        if( !canMoveLeft() && !canMoveRight() && !canMoveTop() && !canMoveBottom() ) {
+            new AlertDialog
+                    .Builder(this, androidx.appcompat.R.style.Base_V21_ThemeOverlay_AppCompat_Dialog)
+                    .setTitle( "Гра завершена" )
+                    .setIcon( android.R.drawable.ic_dialog_alert )
+                    .setMessage( "Ходів більше немає..." )
+                    .setNeutralButton("Нова гра", (dialog, which) -> newGame(null))
+                    .setNegativeButton("Вихід", (dialog, which) -> finish())
+                    .setPositiveButton("Підписка", (dialog, which) -> Toast.makeText(this, "Скоро буде...", Toast.LENGTH_SHORT).show())
+                    .setCancelable( false )
+                    .show();
+        }
+        if(score >= 2048 && !letsPlayFurther)
+        {
+            new AlertDialog
+                    .Builder(this, androidx.appcompat.R.style.Base_V21_ThemeOverlay_AppCompat_Dialog)
+                    .setTitle("Вітаннячко !")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setMessage("Досягнено 2048!")
+                    .setNeutralButton("Нова гра", (dialog, which) -> newGame(null))
+                    .setPositiveButton("Продовжити", (dialog, which) -> letsPlayFurther = true)
+                    .setNegativeButton("Вихід", (dialog, which) -> finish())
+                    .setCancelable( false )
+                    .show();
+        }
+    }
 
     private void saveBestScore() {
         try (FileOutputStream fos = openFileOutput( bestScoreFilename, MODE_PRIVATE ) ) {
@@ -154,7 +188,6 @@ public class GameActivity extends AppCompatActivity {
         initField();
         spawnCell();
         showField();
-        bestScoreOverReached = false;
     }
 
     private void saveField() {
@@ -183,7 +216,7 @@ public class GameActivity extends AppCompatActivity {
                 .Builder(this, androidx.appcompat.R.style.Base_V21_ThemeOverlay_AppCompat_Dialog)
                 .setTitle( "Undo" )
                 .setIcon( android.R.drawable.ic_dialog_alert )
-                .setMessage( "You can undo only one move" )
+                .setMessage( "Можна відмінити лише один хід." )
                 .setNeutralButton("Закрити", (dialog, which) -> {})
                 .setNegativeButton("Вийти", (dialog, which) -> finish())
                 .setPositiveButton("Підписка", (dialog, which) -> Toast.makeText(this, "Скоро буде...", Toast.LENGTH_SHORT).show())
@@ -196,6 +229,39 @@ public class GameActivity extends AppCompatActivity {
         for( int i = 0; i < N; i++ ) {
             for( int j = 1; j < N; j++ ) {
                 if( cells[i][j] != 0 && ( cells[i][j - 1] == 0 || cells[i][j - 1] == cells[i][j] ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canMoveRight() {
+        for( int i = 0; i < N; i++ ) {
+            for( int j = 0; j < N - 1; j++ ) {
+                if( cells[i][j] != 0 && ( cells[i][j + 1] == 0 || cells[i][j + 1] == cells[i][j] ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canMoveTop() {
+        for( int j = 0; j < N; j++ ) {
+            for( int i = 1; i < N; i++ ) {
+                if( cells[i][j] != 0 && ( cells[i - 1][j] == 0 || cells[i - 1][j] == cells[i][j] ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean canMoveBottom() {
+        for( int j = 0; j < N; j++ ) {
+            for( int i = 0; i < N - 1; i++ ) {
+                if( cells[i][j] != 0 && ( cells[i + 1][j] == 0 || cells[i + 1][j] == cells[i][j] ) ) {
                     return true;
                 }
             }
