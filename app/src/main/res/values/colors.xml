@@ -68,6 +68,8 @@
     <color name="chat_text_input_hint">#F5F4F4</color>
     <color name="chat_text_input_bkg">#F5F4F4</color>
     <color name="chat_text_input_bkg_hint">#F5F4F4</color>
-
     <!-- endregion-->
+
+
+
 </resources>

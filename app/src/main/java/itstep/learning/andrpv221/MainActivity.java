@@ -25,10 +25,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        findViewById( R.id.button ).setOnClickListener( this::onCalcButtonClick );
+        findViewById( R.id.button  ).setOnClickListener( this::onCalcButtonClick );
         findViewById( R.id.button2 ).setOnClickListener( this::onGameButtonClick );
         findViewById( R.id.button3 ).setOnClickListener( this::onAnimButtonClick );
         findViewById( R.id.button4 ).setOnClickListener( this::onChatButtonClick );
+        findViewById( R.id.button5 ).setOnClickListener( this::onNbuButtonClick );
+
+    }
+
+    private void onNbuButtonClick(View view) {
+        Intent intent = new Intent(this, NbuActivity.class);
+        startActivity(intent);
     }
 
     private void onChatButtonClick(View view) {

@@ -39,6 +39,7 @@ public class ChatActivity extends AppCompatActivity {
     private final java.text.SimpleDateFormat sqlDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final String chatUrl = "https://chat.momentfor.fun/";
+
     private TextView tvTitle;
     private LinearLayout chatContainer;
     private ScrollView scroller;
