@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -22,6 +23,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,10 +41,11 @@ import java.util.concurrent.Executors;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static final String fileName = "aut.hor";
+
     private final java.text.SimpleDateFormat sqlDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private final String chatUrl = "https://chat.momentfor.fun/";
-
+    private String author = "";
     private TextView tvTitle;
     private LinearLayout chatContainer;
     private ScrollView scroller;
@@ -47,6 +53,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private final ExecutorService threadPool = Executors.newFixedThreadPool( 3 );
     private final Gson gson = new Gson();
+
+    private boolean authorWasBlocked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +73,22 @@ public class ChatActivity extends AppCompatActivity {
         etMessage       = findViewById( R.id.chat_et_message );
         etAuthor        = findViewById( R.id.chat_et_author );
 
+        author = loadAuthor();
+        if (!author.isEmpty()) {
+            setAuthor(author);
+        }
+
         findViewById( R.id.chat_btn_send ).setOnClickListener( this::sendButtonClick );
         loadChat();
     }
 
+    private void setAuthor(String author) {
+        etAuthor.setText(author);
+        blockEtAuthor();
+    }
+
     private void sendButtonClick(View view) {
-        String author = etAuthor.getText().toString();
+        author = etAuthor.getText().toString();
         String message = etMessage.getText().toString();
 
         if (author.isEmpty()) {
@@ -82,23 +100,49 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        CompletableFuture.runAsync(() -> {
-                    sendChatMessage(new ChatMessage()
-                            .setAuthor( author )
-                            .setText( message )
-                            .setMoment( sqlDateFormat.format(String.valueOf(new Date())) )
-                    );
-                    runOnUiThread(() -> {
-                        etAuthor.setText("");
-                        etMessage.setText("");
-
-                    });
-                },
+        CompletableFuture.runAsync( () ->
+                        sendChatMessage( new ChatMessage()
+                                .setAuthor( author )
+                                .setText( message )
+                                .setMoment( sqlDateFormat.format( new Date() ) )
+                        ),
                 threadPool
         );
+
+        if(!authorWasBlocked){
+            blockEtAuthor();
+            saveAuthor();
+        }
     }
 
+    private void blockEtAuthor(){
+        etAuthor.setEnabled(false);
+        authorWasBlocked = true;
+    }
 
+    private void saveAuthor() {
+        try (FileOutputStream fos = openFileOutput( fileName, MODE_PRIVATE ) ) {
+            DataOutputStream writer = new DataOutputStream( fos );
+            writer.writeUTF( author );
+            writer.flush();
+        } catch ( IOException ex ) {
+            Log.e("ChatActivity::Error saving author",
+                    ex.getMessage() != null ? ex.getMessage() : "Error writing File");
+        }
+    }
+
+    private String loadAuthor() {
+        try (
+                FileInputStream fis = openFileInput( fileName );
+                DataInputStream reader = new DataInputStream(fis)
+        ) {
+            return reader.readUTF();
+        } catch (IOException ex) {
+            Log.e("ChatActivity::Error loading author",
+                    ex.getMessage() != null ? ex.getMessage() : "Error reading File");
+            return "";
+        }
+    }
 
     private void sendChatMessage( ChatMessage chatMessage ) {
         try {
@@ -184,17 +228,26 @@ public class ChatActivity extends AppCompatActivity {
         for (ChatMessage cm : chatMessages) {
             LinearLayout messageLayout = new LinearLayout(ChatActivity.this);
             messageLayout.setOrientation(LinearLayout.VERTICAL);
-            messageLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.chat_message_bkg));
-            messageLayout.setPadding(15, 15, 15, 15);
 
             LinearLayout.LayoutParams layoutParamsMessage = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
+
+            if(cm.getAuthor().equals(author)){
+                messageLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.chat_my_message_bkg));
+                layoutParamsMessage.gravity = Gravity.END;
+            }
+            else{
+            messageLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.chat_message_bkg));
+                layoutParamsMessage.gravity = Gravity.START;
+            }
+
             layoutParamsMessage.setMargins(10, 10, 10, 10);
             messageLayout.setLayoutParams(layoutParamsMessage);
+            messageLayout.setPadding(15, 15, 15, 15);
 
-            
+
             TextView tvAuthor = new TextView(ChatActivity.this);
             tvAuthor.setText(cm.getAuthor());
             tvAuthor.setPadding(10, 5, 10, 5);

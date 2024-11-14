@@ -63,6 +63,7 @@
     <color name="chat_text_message">#959595</color>
     <color name="chat_text_author">#D9D9D9</color>
     <color name="chat_text_lay_bkg">#181616</color>
+    <color name="chat_text_my_lay_bkg">#673AB7</color>
     <color name="chat_message_border">#F5F4F4</color>
     <color name="chat_text_input">#F5F4F4</color>
     <color name="chat_text_input_hint">#F5F4F4</color>

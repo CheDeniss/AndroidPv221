@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="10dp"/>
-    <corners android:bottomLeftRadius="0dp"/>
+    <corners android:topLeftRadius="0dp"/>
 
     <solid android:color="@color/chat_text_lay_bkg"/>
 <!--    <stroke-->
