@@ -6,7 +6,5 @@
     <corners android:topLeftRadius="0dp"/>
 
     <solid android:color="@color/chat_text_lay_bkg"/>
-<!--    <stroke-->
-<!--        android:color="@color/chat_message_border"-->
-<!--    android:width="1dp"/>-->
+
 </shape>
