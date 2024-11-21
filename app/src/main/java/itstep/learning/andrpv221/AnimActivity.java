@@ -37,9 +37,11 @@ public class AnimActivity extends AppCompatActivity {
         scaleDemo = AnimationUtils.loadAnimation(this, R.anim.scale_demo );
         rotateDemo = AnimationUtils.loadAnimation(this, R.anim.rotate_demo );
         translateDemo = AnimationUtils.loadAnimation(this, R.anim.translate_demo );
+
         combiDemo = new AnimationSet( true );
         combiDemo.addAnimation( rotateDemo );
         combiDemo.addAnimation( scaleDemo );
+
         bellDemo = AnimationUtils.loadAnimation(this, R.anim.bell_demo );
 
         findViewById( R.id.anim_alpha ).setOnClickListener( this::alphaClick );

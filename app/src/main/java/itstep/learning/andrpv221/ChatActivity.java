@@ -1,8 +1,14 @@
 package itstep.learning.andrpv221;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,15 +16,19 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
@@ -37,7 +47,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,8 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     private final java.text.SimpleDateFormat sqlDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final String chatUrl = "https://chat.momentfor.fun/";
     private String author = "";
-    private TextView tvTitle;
-    private LinearLayout chatContainer;
+    private LinearLayout chatContainer, emogiContainer;
     private ScrollView scroller;
     private EditText etMessage, etAuthor;
     private View vBell;
@@ -59,7 +70,52 @@ public class ChatActivity extends AppCompatActivity {
 
     private final List<ChatMessage> messages = new ArrayList<>();
     private Handler handler = new Handler();
-    private Animation bellAnimation;
+    private Animation bellAnimation, scaleDemo, rotateDemo;
+    private AnimationSet combiDemo;
+    private final Map<String, String> emoji = new HashMap<String, String>() {{
+        // Smileys and Emotion
+        put(":)", new String(Character.toChars(0x1F600))); // Grinning Face
+        put(":D", new String(Character.toChars(0x1F603))); // Smiling Face
+        put(";)", new String(Character.toChars(0x1F609))); // Winking Face
+        put(":P", new String(Character.toChars(0x1F61B))); // Tongue Out
+        put(":'(", new String(Character.toChars(0x1F622))); // Crying Face
+        put(":(", new String(Character.toChars(0x1F641))); // Frowning Face
+
+        // Animals
+        put(":cat:", new String(Character.toChars(0x1F408))); // Cat
+        put(":dog:", new String(Character.toChars(0x1F436))); // Dog
+        put(":fox:", new String(Character.toChars(0x1F98A))); // Fox
+        put(":panda:", new String(Character.toChars(0x1F43C))); // Panda
+
+        // Objects
+        put(":heart:", new String(Character.toChars(0x2764))); // Heart
+        put(":star:", new String(Character.toChars(0x2B50))); // Star
+        put(":fire:", new String(Character.toChars(0x1F525))); // Fire
+        put(":phone:", new String(Character.toChars(0x1F4F1))); // Mobile Phone
+
+        // Nature
+        put(":sun:", new String(Character.toChars(0x2600))); // Sun
+        put(":moon:", new String(Character.toChars(0x1F319))); // Crescent Moon
+        put(":tree:", new String(Character.toChars(0x1F333))); // Deciduous Tree
+        put(":flower:", new String(Character.toChars(0x1F33C))); // Blossom
+
+        // Food
+        put(":apple:", new String(Character.toChars(0x1F34E))); // Red Apple
+        put(":pizza:", new String(Character.toChars(0x1F355))); // Pizza
+        put(":coffee:", new String(Character.toChars(0x2615))); // Hot Beverage
+        put(":cake:", new String(Character.toChars(0x1F382))); // Birthday Cake
+
+        // Flags
+        put(":flag_us:", new String(Character.toChars(0x1F1FA)) + new String(Character.toChars(0x1F1F8))); // US Flag
+        put(":flag_fr:", new String(Character.toChars(0x1F1EB)) + new String(Character.toChars(0x1F1F7))); // France Flag
+        put(":flag_jp:", new String(Character.toChars(0x1F1EF)) + new String(Character.toChars(0x1F1F5))); // Japan Flag
+
+        // Symbols
+        put(":check:", new String(Character.toChars(0x2714))); // Check Mark
+        put(":cross:", new String(Character.toChars(0x274C))); // Cross Mark
+        put(":warning:", new String(Character.toChars(0x26A0))); // Warning Sign
+    }};
+    private MediaPlayer incomingMessage;
 
     @SuppressLint({"MissingInflatedId", "ClickableViewAccessibility"})
     @Override
@@ -72,12 +128,12 @@ public class ChatActivity extends AppCompatActivity {
         //     v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
         //     return insets;
         // });
-        tvTitle       = findViewById( R.id.chat_tv_title     );
         chatContainer = findViewById( R.id.chat_ll_container );
         scroller      = findViewById( R.id.chat_scroller     );
         etAuthor      = findViewById( R.id.chat_et_author    );
         etMessage     = findViewById( R.id.chat_et_message   );
         vBell         = findViewById( R.id.chat_bell         );
+        emogiContainer = findViewById( R.id.chat_ll_emoji );
 
         chatContainer.setOnTouchListener(( v, event ) -> {  // Сховати клавіатуру при кліку на контейнер
             if(getCurrentFocus() != null) {
@@ -95,6 +151,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         bellAnimation = AnimationUtils.loadAnimation(this, R.anim.bell_demo );
+        scaleDemo = AnimationUtils.loadAnimation(this, R.anim.scale_demo);
+        rotateDemo = AnimationUtils.loadAnimation(this, R.anim.rotate_demo );
+
+        combiDemo = new AnimationSet( true );
+        combiDemo.addAnimation( rotateDemo );
+        combiDemo.addAnimation( scaleDemo );
+
+        incomingMessage = MediaPlayer.create(this, R.raw.hit_00);
 
         author = loadAuthor();
         if (!author.isEmpty()) {
@@ -107,11 +171,75 @@ public class ChatActivity extends AppCompatActivity {
                                                   int leftWas, int topWas, int rightWas, int bottomWas) -> scroller.post(
                 ()-> scroller.fullScroll( View.FOCUS_DOWN )
         ));
+
+        for(Map.Entry<String, String> e : emoji.entrySet()){
+            TextView tvEmoji = new TextView(this);
+            tvEmoji.setText(e.getValue());
+            tvEmoji.setTextSize( 20 );
+            tvEmoji.setOnClickListener( v -> {
+                etMessage.setText( etMessage.getText().toString() + e.getKey() );
+                etMessage.setText( etMessage.getText().toString() + " " );
+            });
+            emogiContainer.addView(tvEmoji);
+        }
+
+        urlToImageView("https://images.prom.ua/1065621053_vafelna-kartinka-kohannya.jpg", (ImageView) findViewById(R.id.img_1));
+    }
+
+    @SuppressLint({"MissingPermission", "ObsoleteSdkInt"})
+    private void showNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "ChatChannel",                  // Ідентифікатор каналу
+                    "ChatChannel",                  // Назва каналу
+                    NotificationManager.IMPORTANCE_DEFAULT // Важливість
+            );
+            channel.setDescription("Канал для чат-сповіщень"); // Опис каналу
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // Створення сповіщення
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChatChannel")
+                .setSmallIcon(android.R.drawable.star_big_on)   // Іконка сповіщення
+                .setContentTitle("Чат")                         // Заголовок
+                .setContentText(messages.get(messages.size() - 1).getAuthor() + ": " + messages.get(messages.size() - 1).getText()) // Текст
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT); // Пріоритет
+
+        // Відображення сповіщення
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1001, builder.build());
+    }
+
+
+    private void urlToImageView( String url, ImageView imageView ) {
+        CompletableFuture.supplyAsync( () -> {
+            try ( InputStream is = new URL(url).openStream() ) {
+                return BitmapFactory.decodeStream(is);
+            } catch (IOException e) {
+                Log.e("ChatActivity::urlToImageView", e.getMessage() != null ? e.getMessage() : "IOException");
+                return null;
+            }
+        }, threadPool ).thenAccept( imageView::setImageBitmap );
     }
 
     private void periodic() {
         loadChat();
         handler.postDelayed(this::periodic, 3000);
+    }
+
+    private String encodeEmoji(String text){
+        for(Map.Entry<String, String> e : emoji.entrySet()){
+            text = text.replace(e.getValue(), e.getKey() );
+        }
+        return text;
+    }
+
+    private String decodeEmoji(String text){
+        for(Map.Entry<String, String> e : emoji.entrySet()){
+            text = text.replace(e.getKey(), e.getValue() );
+        }
+        return text;
     }
 
     private void setAuthor(String author) {
@@ -192,7 +320,7 @@ public class ChatActivity extends AppCompatActivity {
             OutputStream outputStream = connection.getOutputStream();
             outputStream.write(String.format("author=%s&msg=%s",
                             chatMessage.getAuthor(),
-                            chatMessage.getText()).
+                            encodeEmoji( chatMessage.getText() ) ).
                     getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
             outputStream.close();
@@ -239,6 +367,7 @@ public class ChatActivity extends AppCompatActivity {
         for (ChatMessage cm : chatMessages) {
             if (messages.stream().noneMatch(m -> m.getId().equals(cm.getId()))) {
                 messages.add(cm);
+                cm.setText( decodeEmoji( cm.getText() ) );
                 wasNew = true;
             }
         }
@@ -281,7 +410,7 @@ public class ChatActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
-            dateMatgTop.setMargins(0, 10, 0, 0);
+            dateMatgTop.setMargins(0, 14, 0, 0);
 
             // Встановлення імені автора
             TextView tvAuthor = new TextView(ChatActivity.this);
@@ -320,6 +449,9 @@ public class ChatActivity extends AppCompatActivity {
         chatContainer.post( () -> {
             scroller.fullScroll( View.FOCUS_DOWN ) ;
             vBell.startAnimation( bellAnimation ) ;
+            showNotification();
+            incomingMessage.start();
+            chatContainer.getChildAt(chatContainer.getChildCount() - 1).startAnimation( combiDemo );
         } ) ;
     }
 
@@ -364,6 +496,20 @@ public class ChatActivity extends AppCompatActivity {
         private String text;
         private String moment;
         private View view;
+        private AnimationSet animation;
+
+        public ChatMessage() {
+            this.animation = combiDemo;
+        }
+
+        public AnimationSet getAnimation() {
+            return animation;
+        }
+
+        public void setAnimation(AnimationSet animation) {
+            this.animation = animation;
+        }
+
 
         public String getId() {
             return id;

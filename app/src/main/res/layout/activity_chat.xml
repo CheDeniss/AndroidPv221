@@ -1,24 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ChatActivity">
 
+    <!-- Background -->
+    <ImageView
+        android:id="@+id/chat_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/l29067"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title -->
     <TextView
         android:id="@+id/chat_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:padding="2dp"
-        android:gravity="center"/>
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="-= Теорія змови =-"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
+    <!-- Author Layout -->
     <LinearLayout
+        android:id="@+id/linearLayout_author"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#90FFFFFF"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/chat_tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/change_Author"
@@ -26,61 +50,88 @@
             android:layout_height="wrap_content"
             android:text="Author:" />
 
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Author:"/>-->
-
         <EditText
             android:id="@+id/chat_et_author"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
+            android:layout_weight="1"
             android:inputType="text"
-            android:text="DNS"/>
+            android:textColor="@color/chat_text_lay_bkg" />
 
         <View
             android:id="@+id/chat_bell"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@android:drawable/ic_popup_reminder"
-            android:backgroundTint="@color/game_tile_64" />
-
+            android:backgroundTint="#4F6E81" />
+        <ImageView
+            android:id="@+id/img_1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            />
     </LinearLayout>
 
+    <!-- Message ScrollView -->
     <ScrollView
         android:id="@+id/chat_scroller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_author"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout_message"
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls">
 
         <LinearLayout
             android:id="@+id/chat_ll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#4CAF50"
             android:orientation="vertical" />
     </ScrollView>
 
-    <LinearLayout
+    <!-- Emoji -->
+    <HorizontalScrollView
+        android:id="@+id/chat_scroll_emoji"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout_message">
+
+        <LinearLayout
+            android:id="@+id/chat_ll_emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Message:"/>
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- Message Layout -->
+    <LinearLayout
+        android:id="@+id/linearLayout_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#90FFFFFF"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/write_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
         <EditText
             android:id="@+id/chat_et_message"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Вітаннєчко++!"/>
+            android:layout_weight="1"
+            android:textColor="@color/chat_text_lay_bkg" />
 
         <ImageButton
             android:id="@+id/chat_btn_send"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
             android:src="@android:drawable/ic_menu_send" />
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
